@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bw.mapper.TeacherMapper">
+
+	<resultMap type="TeacherBean" id="teacherResultMap">
+		<id property="teacher_id" column="teacher_id"></id>
+		<result property="teacher_name" column="teacher_name"></result>
+	    <result property="student_sex" column="student_sex"></result>
+	    <result property="teacher_college" column="teacher_college"></result>
+	    <result property="student_college" column="student_college"></result>
+	    <result property="teacher_phonenumber" column="teacher_phonenumber"></result>
+	</resultMap>
+	<resultMap type="ProjectBean" id="projectResultMap">
+		<id property="project_id" column="project_id"></id>
+		<result property="project_name" column="project_name"></result>
+	    <result property="project_info" column="project_info"></result>
+	    <result property="teacher_id" column="teacher_id"></result>
+	    <result property="teacher_name" column="teacher_name"></result>   
+	</resultMap>
+	<resultMap type="ApplyBean" id="applyResultMap">
+		<id property="project_id" column="project_id"></id>
+		<result property="project_name" column="project_name"></result>
+	    <result property="project_info" column="project_info"></result>
+	    <result property="teacher_id" column="teacher_id"></result>
+	    <result property="student_id" column="student_id"></result>
+	    <result property="student_name" column="student_name"></result>
+	    <result property="teacher_name" column="teacher_name"></result>
+	    <result property="project_content" column="project_content"></result>
+	    <result property="project_progress" column="project_progress"></result>
+	    <result property="project_teach" column="project_teach"></result> 
+	    <result property="pass_status" column="pass_status"></result> 
+	    <result property="project_total_score" column="project_total_score"></result> 
+	    <result property="has_scored_adjuNumber" column="has_scored_adjuNumber"></result> 
+	    <result property="adju_number" column="adju_number"></result>    
+	</resultMap>
+	
+	<select id="Search" parameterType="String" resultMap="applyResultMap" >
+	  select * from apply 
+	  <where>
+	   and teacher_id = #{teacher_id}
+	  <if test = "studentid != null">
+	  
+	     and student_id like concat('%',#{studentid},'%')
+	  </if>
+	  <if test = "studentname != null">
+	  
+	     and student_name like concat('%',#{studentname},'%')
+	  </if>
+	  <if test = "projectname != null">
+	  
+	     and project_name like concat('%',#{projectname},'%')
+	  </if>
+	   <if test = "projectid != null">
+	  
+	     and project_id like concat('%',#{projectid},'%')
+	  </if>
+
+	  </where> 
+	  order by student_id DESC
+
+   </select>
+	
+	
+    <select id="ApplyListById" resultMap="applyResultMap">
+		select p.project_id project_id,t.teacher_id teacher_id,p.student_id student_id,
+		p.student_name student_name,p.project_name project_name,
+		p.project_content project_content,p.project_progress project_progress,
+		p.pass_status pass_status,p.project_teach project_teach,p.adju_number adju_number,
+		p.project_total_score project_total_score
+		from teacher t, apply p
+		where  t.teacher_id  = p.teacher_id and t.teacher_id = #{username}
+	</select>
+	<select id="FindById" resultMap="applyResultMap" parameterType="String">
+		select * from apply 
+		<where>
+	
+		<if test="student_id != null and student_id != ''">
+		  and student_id = #{student_id}
+		
+		</if>
+		<if test="teacher_id != null and teacher_id != ''">
+		  and teacher_id = #{teacher_id}
+		
+		</if>
+		
+		</where>   
+	</select>
+	
+    <update id="updateApply" parameterType="com.bw.model.ApplyBean">
+		update apply
+		set project_teach = #{project_teach},
+		project_progress =  #{project_progress}
+		where teacher_id = #{teacher_id} and student_id = #{student_id}
+	</update>
+    
+    
+	
+	<select id="TeacherListById" resultMap="teacherResultMap">
+		select * from teacher where teacher_id = #{username}
+	</select>
+	
+	<select id="findById" resultType="com.bw.model.TeacherBean" parameterType="String">
+		select * from teacher where teacher_id = #{username}
+	</select>
+	
+	<select id="findByIdpwd" resultType="com.bw.model.TeacherBean" parameterType="String">
+		select * from teacher where teacher_id = #{username}
+	</select>
+	
+	<select id="findByID" resultType="com.bw.model.ProjectBean" parameterType="String">
+		select  *  from project where project_id = #{projectid}
+	</select>
+	
+	<select id="ProjectlistBytId" resultMap="projectResultMap" parameterType="String">
+		select p.project_id project_id,t.teacher_id teacher_id,t.teacher_name teacher_name,p.project_name project_name,p.project_info project_info
+		from teacher t,project p
+		where t.teacher_id = p.teacher_id and t.teacher_id = #{username}
+	</select>
+	
+	
+	<insert id="insertproject" parameterType="com.bw.model.ProjectBean">
+		insert into project ( project_id, project_name, project_info,teacher_id,teacher_name)
+		value (#{project_id},#{project_name},#{project_info},#{teacher_id},#{teacher_name});
+	</insert>
+	<update id="updateTeacher" parameterType="com.bw.model.TeacherBean">
+		update teacher
+		set teacher_name = #{teacher_name},
+		teacher_college =  #{teacher_college},
+		teacher_phonenumber = #{teacher_phonenumber}
+		where teacher_id = #{teacher_id}
+	</update>
+	<update id="updateTeapwd" parameterType="com.bw.model.TeacherBean">
+		update teacher
+		set teacher_password = #{teacher_password}
+		where teacher_id = #{teacher_id}
+	</update>
+	<delete id="DeleteByProjectId"  parameterType="String">
+		delete  from project where project_id = #{project_id}
+	</delete>
+</mapper>

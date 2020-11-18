@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bw.mapper.FileInfoMapper">
+	
+	<resultMap type="FileInfo" id="fileinfoResultMap">
+		<id property="file_id" column="file_id"></id>
+		<result property="file_name" column="file_name"></result>
+	    <result property="file_url" column="file_url"></result>   
+	</resultMap>
+    <resultMap type="ApplyBean" id="applyResultMap">
+		<id property="project_id" column="project_id"></id>
+		<result property="project_name" column="project_name"></result>
+	    <result property="project_info" column="project_info"></result>
+	    <result property="teacher_id" column="teacher_id"></result>
+	    <result property="student_id" column="student_id"></result>
+	    <result property="student_name" column="student_name"></result>
+	    <result property="teacher_name" column="teacher_name"></result>
+	    <result property="project_content" column="project_content"></result>
+	    <result property="project_progress" column="project_progress"></result>
+	    <result property="project_teach" column="project_teach"></result> 
+	    <result property="pass_status" column="pass_status"></result> 
+	    <result property="project_total_score" column="project_total_score"></result> 
+	    <result property="has_scored_adjuNumber" column="has_scored_adjuNumber"></result> 
+	    <result property="adju_number" column="adju_number"></result>    
+	</resultMap>
+    <select id="ApplyByStudentId" resultType="String" parameterType="String">
+		select count(*)from  apply where student_id = #{student_id}
+	</select>
+	<select id="ApplyById" parameterType="String" resultMap="applyResultMap">
+		select   *  from  apply
+		<where>
+	
+		<if test="student_id != null and student_id != ''">
+		  and student_id = #{student_id}
+		
+		</if>
+		<if test="teacher_id != null and teacher_id != ''">
+		  and teacher_id = #{teacher_id}
+		
+		</if>
+		
+		</where>   
+		
+	</select>
+	
+	
+	
+	
+	
+
+	<select id="findFileById" resultMap="fileinfoResultMap">
+		select * from file_info where file_id = #{fileId}
+	</select>
+	
+	<select id="findFileByName" resultMap="fileinfoResultMap">
+		select * from file_info where file_name = #{FileName}
+	</select>
+	
+	
+	<select id="findFileByStudentid" resultMap="fileinfoResultMap">
+		select * from file_info where  student_id = #{student_id} and  teacher_id is null
+	</select>
+	<select id="findFilebyStudentid" resultMap="fileinfoResultMap">
+		select * from file_info where  student_id = #{student_id} and  teacher_id is null
+	</select>
+	
+	
+	
+	<select id="findFileByid" resultMap="fileinfoResultMap">
+		select * from file_info where  teacher_id = #{teacher_id} 
+	</select>
+	<select id="findFilebyid" resultMap="fileinfoResultMap">
+		select * from file_info where  teacher_id = #{teacher_id} 
+	</select>
+	<select id="findFileByTeacherid" resultMap="fileinfoResultMap">
+		select * from file_info where  teacher_id = #{teacher_id} 
+	</select>
+	
+	<!-- 评审员下载 -->
+	<select id="findFileByTeacherId" resultMap="fileinfoResultMap">
+		select * from file_info 
+		<where>
+	
+		<if test="student_id != null and student_id != ''">
+		  and student_id = #{student_id}
+		
+		</if>
+		<if test="teacher_id != null and teacher_id != ''">
+		  and teacher_id = #{teacher_id}
+		
+		</if>
+		
+		</where>     
+	</select>
+	<!-- 评审员上传 -->
+	<select id="findFileByJuryId" resultMap="fileinfoResultMap">
+		select * from file_info where  jury_id = #{jury_id} 
+	</select>
+	<select id="findFileByJuryid" resultMap="fileinfoResultMap">
+		select * from file_info where  jury_id = #{jury_id} 
+	</select>
+	
+	<!-- 管理员下载 -->
+	<select id="findAllFile" resultMap="fileinfoResultMap">
+		select * from file_info   
+	</select>
+	
+	
+	
+	
+	<select id="findByStudentId" resultMap="fileinfoResultMap">
+		select * from apply where  student_id = #{student_id} 
+	</select>
+	<select id="findFile" resultMap="fileinfoResultMap">
+		select     *  from file_info  
+	</select>
+	<insert id="addFileInfo" parameterType="com.bw.model.FileInfo">
+		insert into  file_info(file_name,file_url,student_id) 
+		value (#{file_name},#{file_url},#{student_id});
+	</insert>
+	<update id="updateFileInfo" parameterType="com.bw.model.FileInfo">
+		update file_info 
+		set    file_name=#{file_name},
+		file_url=#{file_url}
+	    where student_id = #{student_id}
+	</update>
+	<insert id="addTeacherFileInfo" parameterType="com.bw.model.FileInfo">
+		insert into  file_info(file_name,file_url,teacher_id,student_id) 
+		value (#{file_name},#{file_url},#{teacher_id},#{student_id});
+	</insert>
+	<update id="updateTeacherFileInfo" parameterType="com.bw.model.FileInfo">
+		update file_info 
+		set    file_name=#{file_name},
+		file_url=#{file_url},
+		student_id=#{student_id}
+	    where teacher_id = #{teacher_id}
+	</update>
+	
+	<insert id="addJuryFileInfo" parameterType="com.bw.model.FileInfo">
+		insert into  file_info(file_name,file_url,jury_id) 
+		value (#{file_name},#{file_url},#{jury_id});
+	</insert>
+	<update id="updateJuryFileInfo" parameterType="com.bw.model.FileInfo">
+		update file_info 
+		set    file_name=#{file_name},
+		file_url=#{file_url}
+	    where jury_id = #{jury_id}
+	</update>
+	
+	<insert id="addManagerFileInfo" parameterType="com.bw.model.FileInfo">
+		insert into  file_info(file_name,file_url,manager_id) 
+		value (#{file_name},#{file_url},#{manager_id});
+	</insert>
+	
+	
+	
+</mapper>

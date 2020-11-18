@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bw.mapper.AdminMapper">
+    <resultMap type="AdminBean" id="adminResultMap">
+		<id property="admin_id" column="admin_id"></id>
+		<result property="admin_name" column="admin_name"></result>
+	</resultMap>
+	
+	<resultMap type="StudentBean" id="studentResultMap">
+		<id property="student_id" column="student_id"></id>
+		<result property="student_name" column="student_name"></result>
+	    <result property="student_sex" column="student_sex"></result>
+	    <result property="student_class" column="student_class"></result>
+	    <result property="student_college" column="student_college"></result>
+	    <result property="student_phonenumber" column="student_phonenumber"></result>
+	</resultMap>
+	<resultMap type="TeacherBean" id="teacherResultMap">
+		<id property="teacher_id" column="teacher_id"></id>
+		<result property="teacher_name" column="teacher_name"></result>
+	    <result property="student_sex" column="student_sex"></result>
+	    <result property="teacher_college" column="teacher_college"></result>
+	    <result property="student_college" column="student_college"></result>
+	    <result property="teacher_phonenumber" column="teacher_phonenumber"></result>
+	</resultMap>
+	<resultMap type="JudgeBean" id="judgeResultMap">
+		<id property="judge_id" column="judge_id"></id>
+		<result property="adju_id" column="adju_id"></result>
+		<result property="student_id" column="student_id"></result>
+	    <result property="project_id" column="project_id"></result>
+	    <result property="adju_name" column="adju_name"></result>
+	    <result property="student_name" column="student_name"></result>
+	    <result property="project_name" column="project_name"></result>
+	</resultMap>
+
+	
+	<resultMap type="AdjuBean" id="juryResultMap">
+		<id property="adjudicator_id" column="adjudicator_id"></id>
+		<result property="adjudicator_name" column="adjudicator_name"></result>
+	 
+	</resultMap>
+	<resultMap type="ApplyBean" id="applyResultMap">
+		<id property="project_id" column="project_id"></id>
+		<result property="project_name" column="project_name"></result>
+	    <result property="project_info" column="project_info"></result>
+	    <result property="teacher_id" column="teacher_id"></result>
+	    <result property="student_id" column="student_id"></result>
+	    <result property="student_name" column="student_name"></result>
+	    <result property="teacher_name" column="teacher_name"></result>
+	    <result property="project_content" column="project_content"></result>
+	    <result property="project_progress" column="project_progress"></result>
+	    <result property="project_teach" column="project_teach"></result> 
+	    <result property="pass_status" column="pass_status"></result> 
+	    <result property="project_total_score" column="project_total_score"></result> 
+	    <result property="has_scored_adjuNumber" column="has_scored_adjuNumber"></result> 
+	    <result property="adju_number" column="adju_number"></result>    
+	</resultMap>
+	
+   <select id="Search" parameterType="String" resultMap="applyResultMap" >
+	  select * from apply 
+	  <where>
+	  <if test = "studentid != null">
+	  
+	     and student_id like concat('%',#{studentid},'%')
+	  </if>
+	  <if test = "studentname != null">
+	  
+	     and student_name like concat('%',#{studentname},'%')
+	  </if>
+	  <if test = "teacherid != null">
+	  
+	     and teacher_id like concat('%',#{teacherid},'%')
+	  </if>
+	  <if test = "teachername != null">
+	  
+	     and teacher_name like concat('%',#{teachername},'%')
+	  </if>
+	   <if test = "projectid != null">
+	  
+	     and project_id like concat('%',#{projectid},'%')
+	  </if>
+
+	  </where> 
+	  order by student_id DESC
+
+   </select>
+
+	
+	
+	<select id="FindByID" resultType="com.bw.model.ApplyBean" parameterType="String">
+		select * from apply where student_id = #{student_id}
+	</select>
+	
+	<select id="alljuryprojectlist" resultType="com.bw.model.JudgeBean" parameterType="String">
+		select * from judge 
+	</select>
+	
+	
+	<select id="FindbyJudge" resultMap="judgeResultMap" >
+		select * from  judge   
+		<where>
+	
+		<if test="student_id != null and student_id != ''">
+		  and student_id = #{student_id}
+		
+		</if>
+		<if test="adju_id != null and adju_id != ''">
+		  and adju_id = #{adju_id} 
+		
+		</if>
+		
+		</where>   
+	</select>
+	
+	<select id="FindbyStudent" resultType="int" parameterType="String">
+		select count(*) from student where student_id  = #{student_id}   
+	</select>
+	<select id="FindbyTeacher" resultType="int" parameterType="String">
+	   select count(*) from teacher where teacher_id  = #{teacher_id}   
+	</select>
+	<select id="FindbyAdju" resultType="int" parameterType="String">
+		select count(*) from adjudicator where adjudicator_id  = #{adjudicator_id}
+	</select>
+	<select id="findById" resultType="com.bw.model.AdminBean" parameterType="String">
+		select * from administrator where admin_id = #{username}
+	</select>
+	<select id="FindbyIdAdju" resultType="com.bw.model.AdjuBean" parameterType="String">
+		select * from adjudicator where adjudicator_id = #{adju_id}
+	</select>
+	
+	<select id="FindbyIdApply" resultType="com.bw.model.ApplyBean" parameterType="String">
+		select * from apply where student_id = #{student_id}
+	</select>
+	
+	<select id="findByIdpwd" resultType="com.bw.model.AdminBean" parameterType="String">
+		select * from administrator where admin_id = #{id}
+	</select>
+	<update id="updateAdminpwd" parameterType="com.bw.model.AdminBean">
+		update administrator
+		set admin_password = #{admin_password}
+		where admin_id = #{admin_id}
+	</update>
+	<update id="updateAdmin" parameterType="com.bw.model.AdminBean">
+		update administrator
+		set admin_name = #{admin_name}
+		where admin_id = #{admin_id}
+	</update>
+	<select id="allstudentlist" resultMap="studentResultMap">
+		select * from student
+	</select>
+	<select id="allteacherlist" resultMap="teacherResultMap">
+		select * from teacher
+	</select>
+	<select id="alljurylist" resultMap="juryResultMap">
+		select * from adjudicator
+	</select>
+	<select id="allapplylist" resultMap="applyResultMap">
+		select * from apply
+	</select>
+	<select id="AdminListById" resultMap="adminResultMap">
+		select * from administrator where admin_id = #{username}
+	</select>
+	<select id="AddapplyById" resultMap="judgeResultMap">
+		select * from judge where adju_id = #{adju_id}
+	</select>
+
+	<insert id="insertstudent" parameterType="com.bw.model.StudentBean">
+		insert into student ( student_id,student_name, student_sex,student_class,student_college,student_phonenumber)
+		value (#{student_id},#{student_name},#{student_sex},#{student_class},#{student_college},#{student_phonenumber});
+	</insert>
+
+    <insert id="insertteacher" parameterType="com.bw.model.TeacherBean">
+		insert into teacher ( teacher_id,teacher_name, teacher_college, teacher_phonenumber)
+		value (#{teacher_id},#{teacher_name},#{teacher_college},#{teacher_phonenumber});
+	</insert>
+	
+	<insert id="insertjury" parameterType="com.bw.model.AdjuBean">
+		insert into adjudicator ( adjudicator_id,adjudicator_name)
+		value (#{adjudicator_id},#{adjudicator_name});
+	</insert>
+	<insert id="insertjudge" parameterType="com.bw.model.ApplyBean">
+		insert into judge ( student_id,project_id,adju_id,adju_name,student_name,project_name)
+		value (#{student_id},#{project_id},#{adju_id},#{adju_name},#{student_name},#{project_name});
+	</insert>
+	
+	<update id="updateAdjuNumber" parameterType="com.bw.model.ApplyBean">
+		update apply
+		set adju_number = #{adju_number}
+		where project_id = #{project_id}
+	</update>
+	<update id="updateApply" parameterType="com.bw.model.ApplyBean">
+		update apply
+		set project_progress =  #{project_progress},
+		pass_status = #{pass_status}
+		where project_id = #{project_id}
+	</update>
+	
+	<delete id="DeleteByStudentId"  parameterType="String">
+		delete  from student where student_id = #{student_id}
+	</delete>
+	
+	<delete id="DeleteByTeacherId"  parameterType="String">
+		delete  from teacher where teacher_id = #{teacher_id}
+	</delete>
+	
+	<delete id="DeleteByAdjuId"  parameterType="String">
+		delete  from adjudicator where adjudicator_id = #{jury_id}
+	</delete>
+	
+	<delete id="DeleteByJudgeId"  parameterType="String">
+		delete  from judge where judge_id = #{judge_id}
+	</delete>
+	
+</mapper>
